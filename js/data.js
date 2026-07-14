@@ -8,8 +8,11 @@ export const BODY_PARTS = {
   "하체": ["엉덩이", "허벅지", "무릎", "종아리", "발목"],
 };
 
-// 관리자 비밀번호 (요구사항)
-export const ADMIN_PASSWORD = "007181";
+// 관리자 비밀번호는 평문으로 저장하지 않고 SHA-256 해시로만 비교합니다.
+// (주의: 서버 없이 클라이언트에서만 검증하는 방식이라 완전한 보안은 아닙니다.
+//  6자리 숫자라 해시를 알아내면 무차별 대입으로 뚫릴 수 있으니, 실제 서비스 단계에서는
+//  반드시 서버 인증으로 교체하세요. js/adminAuth.js 참고.)
+export const ADMIN_PASSWORD_HASH = "9491727d06b77df91f5ad2c41b54d4331bbbc63ebdd8f93ce5df68d4acfed3ca";
 
 // 음성 카운트 기본 설정 (관리자 페이지에서 수정 가능)
 //  - intervalSec: 몇 초에 한 번 셀지 (기본 2초)
