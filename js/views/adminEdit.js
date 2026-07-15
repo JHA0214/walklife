@@ -150,7 +150,8 @@ export function renderAdminEdit() {
   document.getElementById("back").addEventListener("click", function () { go("admin"); });
   document.getElementById("cancel").addEventListener("click", function () { go("admin"); });
 
-  document.getElementById("save").addEventListener("click", function () {
+  const saveBtn = document.getElementById("save");
+  saveBtn.addEventListener("click", async function () {
     const title = document.getElementById("fTitle").value.trim();
     if (!title) { alert("운동 이름을 입력해 주세요."); return; }
     const interval = parseInt(document.getElementById("fInterval").value, 10);
@@ -168,13 +169,21 @@ export function renderAdminEdit() {
     draft.reps = reps;
     draft.difficulty = Math.round(difficultyRaw * 2) / 2;
 
-    if (editing) {
-      updateExercise(editing.id, draft);
-    } else {
-      draft.id = uid();
-      addExercise(draft);
+    saveBtn.disabled = true;
+    saveBtn.textContent = "저장 중…";
+    try {
+      if (editing) {
+        await updateExercise(editing.id, draft);
+      } else {
+        draft.id = uid();
+        await addExercise(draft);
+      }
+      alert("저장되었습니다.");
+      go("admin");
+    } catch (e) {
+      alert("저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      saveBtn.disabled = false;
+      saveBtn.textContent = "💾 저장";
     }
-    alert("저장되었습니다.");
-    go("admin");
   });
 }

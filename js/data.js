@@ -8,28 +8,21 @@ export const BODY_PARTS = {
   "하체": ["엉덩이", "허벅지", "무릎", "종아리", "발목"],
 };
 
-// 관리자 비밀번호는 평문으로 저장하지 않고 SHA-256 해시로만 비교합니다.
-// (주의: 서버 없이 클라이언트에서만 검증하는 방식이라 완전한 보안은 아닙니다.
-//  6자리 숫자라 해시를 알아내면 무차별 대입으로 뚫릴 수 있으니, 실제 서비스 단계에서는
-//  반드시 서버 인증으로 교체하세요. js/adminAuth.js 참고.)
-export const ADMIN_PASSWORD_HASH = "9491727d06b77df91f5ad2c41b54d4331bbbc63ebdd8f93ce5df68d4acfed3ca";
+// 관리자 로그인용 이메일 (Supabase Auth 계정 식별자일 뿐, 비밀 값 아님).
+// 실제 인증/비밀번호 검증은 서버(Supabase Auth)에서 처리합니다 — js/adminAuth.js 참고.
+export const ADMIN_EMAIL = "admin@walklife.local";
 
 // 음성 카운트 기본 설정 (관리자 페이지에서 수정 가능)
 //  - intervalSec: 몇 초에 한 번 셀지 (기본 2초)
 //  - reps: 총 몇 회 셀지 (기본 12회)
 export const DEFAULT_COUNT_SETTINGS = { intervalSec: 2, reps: 12 };
 
-// 기본 데이터 버전 — 이 값을 올리면 다음 실행 때 기본 데이터로 재설정됩니다.
-// (기본 영상 제거 반영: v2)
-// ("걷기" 해시태그 추가 반영: v3)
-// (난이도(difficulty) 필드 추가 반영: v4)
-export const SEED_VERSION = 4;
-
 /*
   기본 운동 데이터.
+  - 실제 운동 데이터는 이제 Supabase에 저장되며, 이 배열은 (1) 최초 Supabase 시드용 원본,
+    (2) 네트워크 연결 실패 시 오프라인 폴백 데이터로만 사용됩니다.
   - youtubeUrl: 관리자가 유튜브 링크로 변경 가능. 비워두면 "영상 준비중" 표시.
   - difficulty: 운동 난이도. 1.0(매우 쉬움) ~ 5.0(매우 어려움), 0.5 단위. 관리자 페이지에서 수정 가능.
-  - 아래 링크는 예시이며 관리자 페이지에서 실제 영상으로 교체하세요.
 */
 export const DEFAULT_EXERCISES = [
   {

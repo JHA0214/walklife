@@ -50,11 +50,17 @@ export function renderAdmin() {
     b.addEventListener("click", function () { go("adminEdit", { id: b.dataset.edit }); });
   });
   listEl.querySelectorAll("[data-del]").forEach(function (b) {
-    b.addEventListener("click", function () {
+    b.addEventListener("click", async function () {
       const ex = exercises.find(function (x) { return x.id === b.dataset.del; });
       if (ex && confirm(`"${ex.title}" 운동을 삭제할까요?`)) {
-        removeExercise(b.dataset.del);
-        renderAdmin();
+        b.disabled = true;
+        try {
+          await removeExercise(b.dataset.del);
+          renderAdmin();
+        } catch (e) {
+          alert("삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+          b.disabled = false;
+        }
       }
     });
   });

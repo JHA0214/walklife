@@ -3,7 +3,7 @@
    화면 모듈을 라우터에 등록하고, 상단 헤더 버튼 이벤트를 연결한 뒤 첫 화면을 그립니다.
    ========================================================================== */
 
-import { applySettings, setAdmin } from "./store.js";
+import { applySettings, initExercises, initAdmin, signOutAdmin } from "./store.js";
 import { go, render, registerScreen } from "./router.js";
 import { openAdminLogin, closeModal } from "./adminAuth.js";
 
@@ -28,8 +28,8 @@ document.getElementById("btnHome").addEventListener("click", function () { go("h
 document.getElementById("btnSettings").addEventListener("click", function () { go("settings"); });
 document.getElementById("btnAdminLogin").addEventListener("click", openAdminLogin);
 document.getElementById("btnGoAdmin").addEventListener("click", function () { go("admin"); });
-document.getElementById("btnLogout").addEventListener("click", function () {
-  setAdmin(false);
+document.getElementById("btnLogout").addEventListener("click", async function () {
+  await signOutAdmin();
   go("home");
 });
 document.getElementById("modalOverlay").addEventListener("click", function (e) {
@@ -37,5 +37,7 @@ document.getElementById("modalOverlay").addEventListener("click", function (e) {
 });
 
 // ---------- 시작 ----------
+document.getElementById("view").innerHTML = '<p class="page-sub">불러오는 중…</p>';
 applySettings();
+await Promise.all([initExercises(), initAdmin()]);
 render();
