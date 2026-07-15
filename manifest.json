@@ -1,0 +1,15 @@
+{
+  "name": "워크라이프 · 낙상예방 운동 가이드",
+  "short_name": "워크라이프",
+  "description": "만 65세 이상 시니어를 위한 낙상예방 운동 가이드 앱",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7f6",
+  "theme_color": "#1f7a5a",
+  "lang": "ko",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
