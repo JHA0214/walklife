@@ -187,7 +187,7 @@ body.high-contrast .brand { color: var(--primary); }
 .icon-btn-label { font-size: 0.5em; margin-top: 2px; }
 body.high-contrast .icon-btn { color: var(--primary); border-color: var(--border); background: #000; }
 
-/* 관리자 로그인: 요구사항 — 작게 */
+/* 헤더의 작은 텍스트 버튼(회원 로그인 버튼, 관리자 로그인 모달 등에서 사용) */
 .admin-login-btn {
   border: 1px solid rgba(255, 255, 255, 0.5);
   background: transparent;
@@ -645,6 +645,8 @@ body.high-contrast .back-btn { color: var(--primary); }
 }
 .modal-title { margin: 0 0 18px; font-size: 1.3em; }
 .pw-error { color: var(--danger); font-weight: 700; margin: 10px 0 0; }
+.pw-success { color: var(--primary); font-weight: 700; margin: 10px 0 0; }
+.text-link { color: var(--primary); font-weight: 700; text-decoration: underline; }
 
 /* ---------- 해시태그 편집 칩 ---------- */
 .chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }

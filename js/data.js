@@ -12,6 +12,11 @@ export const BODY_PARTS = {
 // 실제 인증/비밀번호 검증은 서버(Supabase Auth)에서 처리합니다 — js/adminAuth.js 참고.
 export const ADMIN_EMAIL = "admin@walklife.local";
 
+// 일반 회원은 "아이디"로 가입/로그인하지만 Supabase Auth는 이메일 기반이라,
+// 아이디를 `아이디@USER_EMAIL_DOMAIN` 형태의 내부용 이메일로 변환해 사용합니다.
+// (실제 메일함이 아니며 사용자에게 노출되지 않습니다 — js/store.js 참고.)
+export const USER_EMAIL_DOMAIN = "walklife.local";
+
 // 음성 카운트 기본 설정 (관리자 페이지에서 수정 가능)
 //  - intervalSec: 몇 초에 한 번 셀지 (기본 2초)
 //  - reps: 총 몇 회 셀지 (기본 12회)

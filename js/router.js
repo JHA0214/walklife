@@ -5,7 +5,7 @@
    ========================================================================== */
 
 import { stopCount } from "./voiceCount.js";
-import { isAdmin } from "./store.js";
+import { isAdmin, isLoggedIn, getUsername } from "./store.js";
 
 let route = { name: "home", params: {} };
 const screens = {};
@@ -27,6 +27,7 @@ export function go(name, params) {
 
 export function render() {
   updateAdminBanner();
+  updateUserButton();
   const fn = screens[route.name] || screens.home;
   fn();
 }
@@ -34,4 +35,15 @@ export function render() {
 function updateAdminBanner() {
   const banner = document.getElementById("adminBanner");
   banner.hidden = !isAdmin();
+}
+
+function updateUserButton() {
+  const btn = document.getElementById("btnUserLogin");
+  if (isLoggedIn()) {
+    btn.textContent = getUsername() + "님";
+    btn.dataset.mode = "logout";
+  } else {
+    btn.textContent = "로그인";
+    btn.dataset.mode = "login";
+  }
 }
