@@ -206,13 +206,13 @@ function usernameToEmail(username) {
 function normalizePhone(phone) {
   return (phone || "").replace(/[^0-9]/g, "");
 }
-export function isValidUsername(username) {
+function isValidUsername(username) {
   return USERNAME_RE.test((username || "").trim());
 }
-export function isValidPhone(phone) {
+function isValidPhone(phone) {
   return PHONE_RE.test((phone || "").trim());
 }
-export function isValidEmail(email) {
+function isValidEmail(email) {
   return EMAIL_RE.test((email || "").trim());
 }
 

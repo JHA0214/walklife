@@ -54,7 +54,7 @@ export function renderExercise() {
         <button class="btn btn-primary" id="editThis">✏️ 이 운동 수정</button>
       </div>` : ""}
   `;
-  document.getElementById("back").addEventListener("click", function () { history.length > 1 ? go("home") : go("home"); });
+  document.getElementById("back").addEventListener("click", function () { go("home"); });
 
   wireFavButton(viewEl.querySelector(".fav-btn"));
 
