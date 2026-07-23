@@ -257,14 +257,22 @@ export async function signUpUser(username, password, phone, email) {
   currentUsername = username.trim(); // onAuthStateChange를 기다리지 않고 즉시 반영
 }
 
+// 아이디만으로는 실제 로그인용 이메일을 알 수 없음(이메일 등록 회원은 그 이메일,
+// 아니면 내부용 가짜 이메일). 이 조회를 클라이언트에서 직접 하면 비밀번호 없이도
+// 등록된 이메일이 새어나갈 수 있어, 조회+로그인 시도를 전부 서버 쪽 Edge
+// Function(supabase/functions/login)에 맡기고 성공 시 받은 토큰으로 세션만 연다.
 export async function signInUser(username, password) {
-  // 아이디만으로는 실제 로그인용 이메일을 알 수 없음(이메일 등록 회원은 그 이메일,
-  // 아니면 내부용 가짜 이메일) — DB에 물어봐서 확인.
-  const { data: loginEmail } = await supabase.rpc("get_login_email", { p_username: username.trim() });
-  const email = loginEmail || usernameToEmail(username);
-
-  const { error } = await supabase.auth.signInWithPassword({ email: email, password: password });
-  if (error) throw new Error("아이디 또는 비밀번호가 올바르지 않습니다.");
+  const { data, error } = await supabase.functions.invoke("login", {
+    body: { username: username.trim(), password: password },
+  });
+  if (error || !data || data.error || !data.access_token) {
+    throw new Error("아이디 또는 비밀번호가 올바르지 않습니다.");
+  }
+  const { error: sessionError } = await supabase.auth.setSession({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+  });
+  if (sessionError) throw new Error("아이디 또는 비밀번호가 올바르지 않습니다.");
   adminFlag = false;
   currentUsername = username.trim();
 }

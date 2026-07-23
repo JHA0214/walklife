@@ -9,8 +9,11 @@
 -- 이메일로 그대로 쓰이고(비밀번호 찾기를 Supabase의 내장 이메일 링크로
 -- 처리하기 위함), 입력하지 않은 회원은 기존처럼 `아이디@walklife.local`
 -- 형태의 내부용 이메일을 씁니다. "아이디로 로그인"은 어느 쪽이든 동일하게
--- 동작해야 하므로, 로그인 시에는 아래 get_login_email() 함수로 실제
--- 로그인용 이메일을 찾아 씁니다 — js/store.js의 signInUser 참고.
+-- 동작해야 하므로, 아이디 -> 실제 이메일 조회는 클라이언트가 직접 하지 않고
+-- 서버 쪽 Edge Function(supabase/functions/login)이 service role로 조회한 뒤
+-- 로그인까지 대신 시도해서 성공/실패만 돌려줍니다 — js/store.js의 signInUser 참고.
+-- (예전엔 이 조회를 공개 RPC(get_login_email)로 했었는데, 비밀번호 없이 아이디만
+-- 알아도 등록된 실제 이메일이 새어나가는 문제가 있어 이 방식으로 교체했습니다.)
 -- ==========================================================================
 
 create table if not exists public.profiles (
@@ -53,22 +56,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- 로그인 시 "아이디" -> 실제 로그인용 이메일 변환에 쓰는 함수.
--- 이메일을 등록한 회원은 그 이메일을, 등록하지 않은 회원은
--- `아이디@walklife.local`을 돌려줍니다. 로그인 전(비로그인 상태)에도
--- 호출해야 하므로 RLS를 우회하는 security definer 함수로 만들고,
--- 이메일 주소 한 개만 돌려줘 다른 개인정보(전화번호 등) 노출은 없습니다.
-create or replace function public.get_login_email(p_username text)
-returns text
-language sql
-security definer
-set search_path = public
-as $$
-  select coalesce(email, username || '@walklife.local')
-  from public.profiles
-  where username = p_username
-  limit 1;
-$$;
-
-revoke all on function public.get_login_email(text) from public;
-grant execute on function public.get_login_email(text) to anon, authenticated;
+-- 예전에 쓰던 공개 RPC(아이디만으로 실제 이메일을 조회할 수 있어 정보 노출
+-- 문제가 있었음)는 더 이상 쓰지 않으므로, 이미 만들어 실행했었다면 제거합니다.
+-- 이제 이 조회는 supabase/functions/login Edge Function 안에서만 이뤄집니다.
+drop function if exists public.get_login_email(text);
