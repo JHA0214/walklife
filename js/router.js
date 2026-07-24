@@ -41,7 +41,7 @@ function updateUserButton() {
   const btn = document.getElementById("btnUserLogin");
   if (isLoggedIn()) {
     btn.textContent = getUsername() + "님";
-    btn.dataset.mode = "logout";
+    btn.dataset.mode = "mypage";
   } else {
     btn.textContent = "로그인";
     btn.dataset.mode = "login";

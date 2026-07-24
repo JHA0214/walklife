@@ -3,7 +3,7 @@
    화면 모듈을 라우터에 등록하고, 상단 헤더 버튼 이벤트를 연결한 뒤 첫 화면을 그립니다.
    ========================================================================== */
 
-import { applySettings, initExercises, initAuthSession, getUsername, signOutAdmin, signOutUser, setPasswordRecoveryHandler } from "./store.js";
+import { applySettings, initExercises, initAuthSession, signOutAdmin, setPasswordRecoveryHandler } from "./store.js";
 import { go, render, registerScreen } from "./router.js";
 import { closeModal } from "./adminAuth.js";
 
@@ -18,6 +18,7 @@ import { renderLogin } from "./views/login.js";
 import { renderSignup } from "./views/signup.js";
 import { renderFindPassword } from "./views/findPassword.js";
 import { renderResetPassword } from "./views/resetPassword.js";
+import { renderMypage } from "./views/mypage.js";
 
 registerScreen("home", renderHome);
 registerScreen("subparts", renderSubparts);
@@ -30,6 +31,7 @@ registerScreen("login", renderLogin);
 registerScreen("signup", renderSignup);
 registerScreen("findPassword", renderFindPassword);
 registerScreen("resetPassword", renderResetPassword);
+registerScreen("mypage", renderMypage);
 
 // ---------- 헤더 버튼 이벤트 ----------
 document.getElementById("btnHome").addEventListener("click", function () { go("home"); });
@@ -39,15 +41,8 @@ document.getElementById("btnLogout").addEventListener("click", async function ()
   await signOutAdmin();
   go("home");
 });
-document.getElementById("btnUserLogin").addEventListener("click", async function () {
-  if (this.dataset.mode === "logout") {
-    if (confirm(getUsername() + "님, 로그아웃 하시겠어요?")) {
-      await signOutUser();
-      go("home");
-    }
-  } else {
-    go("login");
-  }
+document.getElementById("btnUserLogin").addEventListener("click", function () {
+  go(this.dataset.mode === "mypage" ? "mypage" : "login");
 });
 document.getElementById("modalOverlay").addEventListener("click", function (e) {
   if (e.target.id === "modalOverlay") closeModal();
