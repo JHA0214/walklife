@@ -2,12 +2,14 @@
    워킹라이프 — 회원 로그인
    ========================================================================== */
 
-import { signInUser } from "../store.js";
+import { signInUser, getSavedUsername, setSavedUsername } from "../store.js";
 import { go } from "../router.js";
 import { openAdminLogin } from "../adminAuth.js";
+import { esc } from "../utils.js";
 
 export function renderLogin() {
   const viewEl = document.getElementById("view");
+  const savedUsername = getSavedUsername();
   viewEl.innerHTML = `
     <button class="back-btn" id="back">← 뒤로</button>
     <h1 class="page-title">로그인</h1>
@@ -15,7 +17,11 @@ export function renderLogin() {
 
     <div class="field">
       <label for="loginUsername">아이디</label>
-      <input type="text" id="loginUsername" autocomplete="username" placeholder="아이디" />
+      <input type="text" id="loginUsername" autocomplete="username" placeholder="아이디" value="${esc(savedUsername)}" />
+    </div>
+    <div class="field" style="display:flex;align-items:center;gap:10px;margin-top:-8px;">
+      <input type="checkbox" id="rememberUsername" style="width:22px;height:22px;" ${savedUsername ? "checked" : ""} />
+      <label for="rememberUsername" style="margin:0;font-weight:normal;">아이디 저장</label>
     </div>
     <div class="field">
       <label for="loginPassword">비밀번호</label>
@@ -54,6 +60,7 @@ export function renderLogin() {
     okBtn.disabled = true;
     try {
       await signInUser(username, password);
+      setSavedUsername(document.getElementById("rememberUsername").checked ? username.trim() : null);
       go("home");
     } catch (e) {
       showError(e.message || "로그인에 실패했습니다.");

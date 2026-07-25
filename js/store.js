@@ -9,6 +9,7 @@ import { supabase } from "./supabaseClient.js";
 const STORE_EX_CACHE = "wl_exercises_cache"; // 오프라인 폴백용 캐시 (더 이상 원본 저장소 아님)
 const STORE_SETTINGS = "wl_settings";
 const STORE_FAVORITES = "wl_favorites";
+const STORE_SAVED_USERNAME = "wl_saved_username";
 
 // ---------- 설정/즐겨찾기 저장소 (기존과 동일, 계속 localStorage) ----------
 function loadSettings() {
@@ -214,6 +215,17 @@ function isValidPhone(phone) {
 }
 function isValidEmail(email) {
   return EMAIL_RE.test((email || "").trim());
+}
+
+// ---------- 로그인 아이디 저장(기기에 저장, "아이디 저장" 체크박스용) ----------
+export function getSavedUsername() {
+  try { return localStorage.getItem(STORE_SAVED_USERNAME) || ""; } catch (e) { return ""; }
+}
+export function setSavedUsername(username) {
+  try {
+    if (username) localStorage.setItem(STORE_SAVED_USERNAME, username);
+    else localStorage.removeItem(STORE_SAVED_USERNAME);
+  } catch (e) { /* 무시 */ }
 }
 
 export function isLoggedIn() {
