@@ -2,7 +2,8 @@
 -- 워킹라이프 — 일반 회원 프로필 테이블
 -- Supabase 대시보드 > SQL Editor 에서 이 파일 전체를 실행하세요.
 -- (회원가입/로그인 자체는 Supabase Auth가 담당하며, 이 테이블은
---  "아이디(username)", "전화번호(phone)", "이메일(email, 선택)"을 함께
+--  "아이디(username)", "전화번호(phone)", "이메일(email, 선택)"과
+--  "나이/성별/원하는 운동 강도/관심 운동 해시태그(전부 선택)"를 함께
 --  보관하기 위한 보조 테이블입니다.)
 --
 -- 이메일을 입력한 회원은 가입 시 그 실제 이메일이 Supabase Auth 계정의
@@ -21,11 +22,19 @@ create table if not exists public.profiles (
   username text unique not null,
   phone text not null,
   email text unique,
+  age integer,
+  gender text,
+  desired_intensity integer,
+  preferred_hashtags text[] not null default '{}',
   created_at timestamptz not null default now()
 );
 
--- 기존에 이미 profiles 테이블을 만들어 실행했었다면 이 줄로 email 컬럼만 추가됩니다.
+-- 기존에 이미 profiles 테이블을 만들어 실행했었다면 이 줄들로 새 컬럼만 추가됩니다.
 alter table public.profiles add column if not exists email text unique;
+alter table public.profiles add column if not exists age integer;
+alter table public.profiles add column if not exists gender text;
+alter table public.profiles add column if not exists desired_intensity integer;
+alter table public.profiles add column if not exists preferred_hashtags text[] not null default '{}';
 
 alter table public.profiles enable row level security;
 
@@ -35,17 +44,26 @@ create policy "profiles_select_own" on public.profiles
   for select using (auth.uid() = id);
 
 -- auth.users에 새 계정이 생기면(회원가입 시 signUp의 options.data로 넘긴
--- username/phone/email을 이용해) 자동으로 profiles 행을 만들어주는 트리거.
+-- username/phone/email/age/gender/desired_intensity/preferred_hashtags를 이용해)
+-- 자동으로 profiles 행을 만들어주는 트리거. age/gender/desired_intensity/
+-- preferred_hashtags는 전부 선택 입력이라 없으면 null(태그는 빈 배열)로 들어갑니다.
 -- security definer로 실행되어 RLS/타이밍 문제 없이 항상 안전하게 생성됩니다.
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, username, phone, email)
+  insert into public.profiles (id, username, phone, email, age, gender, desired_intensity, preferred_hashtags)
   values (
     new.id,
     new.raw_user_meta_data->>'username',
     new.raw_user_meta_data->>'phone',
-    new.raw_user_meta_data->>'email'
+    new.raw_user_meta_data->>'email',
+    (new.raw_user_meta_data->>'age')::integer,
+    new.raw_user_meta_data->>'gender',
+    (new.raw_user_meta_data->>'desired_intensity')::integer,
+    coalesce(
+      (select array_agg(t) from jsonb_array_elements_text(coalesce(new.raw_user_meta_data->'preferred_hashtags', '[]'::jsonb)) as t),
+      '{}'
+    )
   );
   return new;
 end;

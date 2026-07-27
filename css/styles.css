@@ -648,6 +648,20 @@ body.high-contrast .back-btn { color: var(--primary); }
 .pw-success { color: var(--primary); font-weight: 700; margin: 10px 0 0; }
 .text-link { color: var(--primary); font-weight: 700; text-decoration: underline; }
 
+/* 선택 가능한 태그 토글(회원가입 시 관심 운동 선택 등) */
+.tag-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.tag-choice {
+  padding: 10px 16px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+.tag-choice.active { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-dark); }
+
 /* ---------- 해시태그 편집 칩 ---------- */
 .chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .chip {

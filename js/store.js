@@ -121,6 +121,15 @@ export function filterExercises(q) {
     return hay.indexOf(q) !== -1;
   });
 }
+// 지금까지 등록된 운동들의 해시태그를 중복 없이 모아 정렬해서 돌려줌
+// (회원가입 시 "원하는 운동" 선택지로 사용 — js/views/signup.js 참고)
+export function getAllHashtags() {
+  const set = new Set();
+  exercises.forEach(function (e) {
+    (e.hashtags || []).forEach(function (t) { set.add(t); });
+  });
+  return Array.from(set).sort();
+}
 
 // 운동별 음성 카운트 설정 읽기 (값이 없으면 기본값 사용)
 export function exInterval(ex) {
@@ -237,12 +246,24 @@ export function getUsername() {
 
 // 회원가입. email은 선택 입력 — 입력하면 비밀번호 찾기를 이메일 링크(더 안전)로 쓸 수 있고,
 // 비워두면 기존처럼 전화번호 일치 확인 방식만 쓸 수 있습니다.
-export async function signUpUser(username, password, phone, email) {
+// age/gender/desiredIntensity/preferredHashtags는 전부 선택 입력입니다.
+export async function signUpUser({ username, password, phone, email, age, gender, desiredIntensity, preferredHashtags }) {
   if (!isValidUsername(username)) throw new Error("아이디는 영문/숫자/밑줄 4~20자로 입력해 주세요.");
   if (!isValidPhone(phone)) throw new Error("전화번호 형식이 올바르지 않습니다. 예) 010-1234-5678");
   if (!password || password.length < 6) throw new Error("비밀번호는 6자 이상 입력해 주세요.");
   const trimmedEmail = (email || "").trim();
   if (trimmedEmail && !isValidEmail(trimmedEmail)) throw new Error("이메일 형식이 올바르지 않습니다.");
+
+  let ageNum = null;
+  if (age !== null && age !== undefined && age !== "") {
+    ageNum = Number(age);
+    if (!Number.isInteger(ageNum) || ageNum < 1 || ageNum > 120) throw new Error("나이는 1~120 사이 숫자로 입력해 주세요.");
+  }
+  let intensityNum = null;
+  if (desiredIntensity !== null && desiredIntensity !== undefined && desiredIntensity !== "") {
+    intensityNum = Number(desiredIntensity);
+    if (!Number.isInteger(intensityNum) || intensityNum < 1 || intensityNum > 5) throw new Error("운동 강도는 1~5 중에서 선택해 주세요.");
+  }
 
   // 이메일을 입력했다면 그 실제 이메일을 계정 이메일로 사용(비밀번호 찾기 이메일 링크용).
   // 입력하지 않았다면 기존처럼 내부용 가짜 이메일을 사용.
@@ -256,6 +277,10 @@ export async function signUpUser(username, password, phone, email) {
         username: username.trim(),
         phone: normalizePhone(phone),
         email: trimmedEmail || null,
+        age: ageNum,
+        gender: gender || null,
+        desired_intensity: intensityNum,
+        preferred_hashtags: preferredHashtags || [],
       },
     },
   });
