@@ -319,6 +319,45 @@ export async function signOutUser() {
   currentUsername = null;
 }
 
+// 마이페이지에서 나이/성별/운동강도/관심운동을 나중에 입력·수정할 수 있게 하는 함수들.
+// (아이디/전화번호/이메일은 여기로 못 바꿈 — DB의 컬럼 단위 권한으로 막혀 있음)
+export async function getMyProfile() {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("age, gender, desired_intensity, preferred_hashtags")
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateMyProfile({ age, gender, desiredIntensity, preferredHashtags }) {
+  let ageNum = null;
+  if (age !== null && age !== undefined && age !== "") {
+    ageNum = Number(age);
+    if (!Number.isInteger(ageNum) || ageNum < 1 || ageNum > 120) throw new Error("나이는 1~120 사이 숫자로 입력해 주세요.");
+  }
+  let intensityNum = null;
+  if (desiredIntensity !== null && desiredIntensity !== undefined && desiredIntensity !== "") {
+    intensityNum = Number(desiredIntensity);
+    if (!Number.isInteger(intensityNum) || intensityNum < 1 || intensityNum > 5) throw new Error("운동 강도는 1~5 중에서 선택해 주세요.");
+  }
+  const { data: userData } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({
+      age: ageNum,
+      gender: gender || null,
+      desired_intensity: intensityNum,
+      preferred_hashtags: preferredHashtags || [],
+    })
+    .eq("id", userData.user.id)
+    .select();
+  if (error) throw error;
+  // RLS 정책이 없거나 안 맞으면 update가 에러 없이 0건 처리될 수 있어서,
+  // 실제로 행이 바뀌었는지(select 결과가 있는지)까지 확인해야 "저장 성공"을 믿을 수 있음.
+  if (!data || !data.length) throw new Error("저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+}
+
 // 전화번호로 본인 확인 후 비밀번호를 재설정합니다(SMS 인증 없는 약식 확인).
 // 다른 회원의 비밀번호를 바꾸는 작업이라 anon key로는 할 수 없고, service role 키를 쓰는
 // 서버 쪽 Edge Function(supabase/functions/reset-password)에서 처리합니다.
