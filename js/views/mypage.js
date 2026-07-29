@@ -35,13 +35,21 @@ export function renderMypage() {
       <button class="btn btn-primary btn-block" id="saveProfileBtn" disabled>저장</button>
     </div>
 
-    <div class="actions-row" style="margin-top:24px;">
+    <p class="page-sub" style="margin-top:28px;">
+      <a href="#" id="goEditPhone" class="text-link">회원정보 수정 (전화번호 변경)</a>
+      · <a href="#" id="goChangePassword" class="text-link">비밀번호 변경</a>
+    </p>
+
+    <div class="actions-row" style="margin-top:12px;">
       <button class="btn btn-block" id="logoutBtn">로그아웃</button>
     </div>
   `;
 
   document.getElementById("back").addEventListener("click", function () { go("home"); });
   if (favs.length) renderExerciseList(document.getElementById("favList"), favs);
+
+  document.getElementById("goEditPhone").addEventListener("click", function (e) { e.preventDefault(); go("editPhone"); });
+  document.getElementById("goChangePassword").addEventListener("click", function (e) { e.preventDefault(); go("changePassword"); });
 
   document.getElementById("logoutBtn").addEventListener("click", async function () {
     if (confirm(getUsername() + "님, 로그아웃 하시겠어요?")) {

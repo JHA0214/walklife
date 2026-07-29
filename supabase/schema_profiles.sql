@@ -43,16 +43,18 @@ drop policy if exists "profiles_select_own" on public.profiles;
 create policy "profiles_select_own" on public.profiles
   for select using (auth.uid() = id);
 
--- 본인 프로필만 수정 가능(마이페이지에서 나이/성별/운동강도/관심운동을
--- 나중에 입력·변경할 수 있게 하기 위함 — js/store.js의 updateMyProfile 참고).
--- 컬럼 단위 권한(grant update (...))으로 아이디/전화번호/이메일 등은 이 경로로
--- 못 바꾸게 막아뒀으므로, 클라이언트가 다른 값을 보내도 DB가 거부합니다.
+-- 본인 프로필만 수정 가능(마이페이지에서 나이/성별/운동강도/관심운동/전화번호를
+-- 나중에 입력·변경할 수 있게 하기 위함 — js/store.js의 updateMyProfile,
+-- changePhoneNumber 참고). 컬럼 단위 권한(grant update (...))으로 아이디/이메일
+-- 등은 이 경로로 못 바꾸게 막아뒀으므로, 클라이언트가 다른 값을 보내도 DB가
+-- 거부합니다. 전화번호 변경은 클라이언트(changePhoneNumber)에서 비밀번호를
+-- 다시 확인한 뒤에만 호출하도록 만들어져 있습니다.
 drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own" on public.profiles
   for update using (auth.uid() = id) with check (auth.uid() = id);
 
 revoke update on public.profiles from authenticated;
-grant update (age, gender, desired_intensity, preferred_hashtags) on public.profiles to authenticated;
+grant update (age, gender, desired_intensity, preferred_hashtags, phone) on public.profiles to authenticated;
 
 -- auth.users에 새 계정이 생기면(회원가입 시 signUp의 options.data로 넘긴
 -- username/phone/email/age/gender/desired_intensity/preferred_hashtags를 이용해)

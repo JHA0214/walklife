@@ -324,7 +324,7 @@ export async function signOutUser() {
 export async function getMyProfile() {
   const { data, error } = await supabase
     .from("profiles")
-    .select("age, gender, desired_intensity, preferred_hashtags")
+    .select("phone, age, gender, desired_intensity, preferred_hashtags")
     .single();
   if (error) throw error;
   return data;
@@ -356,6 +356,41 @@ export async function updateMyProfile({ age, gender, desiredIntensity, preferred
   // RLS 정책이 없거나 안 맞으면 update가 에러 없이 0건 처리될 수 있어서,
   // 실제로 행이 바뀌었는지(select 결과가 있는지)까지 확인해야 "저장 성공"을 믿을 수 있음.
   if (!data || !data.length) throw new Error("저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+}
+
+// 현재 비밀번호가 맞는지 다시 로그인을 시도해 확인(재인증). 전화번호/비밀번호
+// 변경처럼 민감한 회원정보 변경 전에 공통으로 씁니다.
+async function reauthenticate(currentPassword) {
+  if (!currentPassword) throw new Error("비밀번호를 입력해 주세요.");
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) throw new Error("로그인이 필요합니다.");
+  const { error: reauthError } = await supabase.auth.signInWithPassword({
+    email: userData.user.email,
+    password: currentPassword,
+  });
+  if (reauthError) throw new Error("현재 비밀번호가 올바르지 않습니다.");
+  return userData.user;
+}
+
+// 전화번호(회원정보) 변경. 아이디/비밀번호와 달리 민감한 계정 식별 정보라
+// 현재 비밀번호를 다시 확인한 뒤에만 바꿀 수 있게 합니다.
+export async function changePhoneNumber(currentPassword, newPhone) {
+  if (!isValidPhone(newPhone)) throw new Error("전화번호 형식이 올바르지 않습니다. 예) 010-1234-5678");
+  const user = await reauthenticate(currentPassword);
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ phone: normalizePhone(newPhone) })
+    .eq("id", user.id)
+    .select();
+  if (error) throw error;
+  if (!data || !data.length) throw new Error("저장에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+}
+
+// 비밀번호 변경(로그인된 상태에서). 현재 비밀번호를 다시 확인한 뒤에만 바꿉니다.
+export async function changePassword(currentPassword, newPassword) {
+  await reauthenticate(currentPassword);
+  await updateOwnPassword(newPassword);
 }
 
 // 전화번호로 본인 확인 후 비밀번호를 재설정합니다(SMS 인증 없는 약식 확인).
