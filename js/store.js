@@ -324,7 +324,7 @@ export async function signOutUser() {
 export async function getMyProfile() {
   const { data, error } = await supabase
     .from("profiles")
-    .select("phone, age, gender, desired_intensity, preferred_hashtags")
+    .select("age, gender, desired_intensity, preferred_hashtags")
     .single();
   if (error) throw error;
   return data;
@@ -370,6 +370,15 @@ async function reauthenticate(currentPassword) {
   });
   if (reauthError) throw new Error("현재 비밀번호가 올바르지 않습니다.");
   return userData.user;
+}
+
+// 현재 전화번호는 민감한 정보라 화면에 그냥 띄우지 않고, 비밀번호를 다시
+// 확인해 본인이 맞을 때만 보여줍니다.
+export async function verifyPasswordAndGetPhone(currentPassword) {
+  const user = await reauthenticate(currentPassword);
+  const { data, error } = await supabase.from("profiles").select("phone").eq("id", user.id).single();
+  if (error) throw error;
+  return data.phone;
 }
 
 // 전화번호(회원정보) 변경. 아이디/비밀번호와 달리 민감한 계정 식별 정보라

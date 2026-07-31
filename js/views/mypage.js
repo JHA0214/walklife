@@ -24,8 +24,6 @@ export function renderMypage() {
 
     <p class="page-sub" style="margin-top:28px;">
       <a href="#" id="goEditProfileFields" class="text-link">내 정보 수정</a>
-      · <a href="#" id="goEditPhone" class="text-link">회원정보 수정 (전화번호 변경)</a>
-      · <a href="#" id="goChangePassword" class="text-link">비밀번호 변경</a>
     </p>
 
     <div class="actions-row" style="margin-top:12px;">
@@ -37,8 +35,6 @@ export function renderMypage() {
   if (favs.length) renderExerciseList(document.getElementById("favList"), favs);
 
   document.getElementById("goEditProfileFields").addEventListener("click", function (e) { e.preventDefault(); go("editProfileFields"); });
-  document.getElementById("goEditPhone").addEventListener("click", function (e) { e.preventDefault(); go("editPhone"); });
-  document.getElementById("goChangePassword").addEventListener("click", function (e) { e.preventDefault(); go("changePassword"); });
 
   document.getElementById("logoutBtn").addEventListener("click", async function () {
     if (confirm(getUsername() + "님, 로그아웃 하시겠어요?")) {
