@@ -131,6 +131,16 @@ export function getAllHashtags() {
   return Array.from(set).sort();
 }
 
+// 회원이 회원가입/내 정보 수정에서 고른 "원하는 운동"(해시태그)과 겹치는
+// 운동 목록을 돌려줌 (마이페이지의 추천 운동 — js/views/mypage.js 참고)
+export function getRecommendedExercises(preferredHashtags) {
+  const wanted = new Set(preferredHashtags || []);
+  if (!wanted.size) return [];
+  return exercises.filter(function (e) {
+    return (e.hashtags || []).some(function (t) { return wanted.has(t); });
+  });
+}
+
 // 운동별 음성 카운트 설정 읽기 (값이 없으면 기본값 사용)
 export function exInterval(ex) {
   return Number(ex && ex.intervalSec) > 0 ? Number(ex.intervalSec) : DEFAULT_COUNT_SETTINGS.intervalSec;
