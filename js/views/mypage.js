@@ -73,7 +73,7 @@ async function loadRecommended() {
     return;
   }
 
-  const recommended = getRecommendedExercises(preferred).filter(function (e) { return !isFav(e.id); });
+  const recommended = getRecommendedExercises(preferred, profile.desired_intensity).filter(function (e) { return !isFav(e.id); });
   if (!recommended.length) {
     wrap.innerHTML = '<div class="empty">등록하신 관심 운동과 일치하는 운동이 아직 없습니다.</div>';
     return;

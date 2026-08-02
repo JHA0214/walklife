@@ -132,12 +132,18 @@ export function getAllHashtags() {
 }
 
 // 회원이 회원가입/내 정보 수정에서 고른 "원하는 운동"(해시태그)과 겹치는
-// 운동 목록을 돌려줌 (마이페이지의 추천 운동 — js/views/mypage.js 참고)
-export function getRecommendedExercises(preferredHashtags) {
+// 운동 목록을 돌려줌. desiredIntensity(1~5)가 있으면 그 강도와 난이도가
+// 가까운 순으로 정렬해서, 관심 키워드뿐 아니라 원하는 강도에도 맞는 운동이
+// 먼저 나오게 함 (마이페이지의 추천 운동 — js/views/mypage.js 참고).
+export function getRecommendedExercises(preferredHashtags, desiredIntensity) {
   const wanted = new Set(preferredHashtags || []);
   if (!wanted.size) return [];
-  return exercises.filter(function (e) {
+  const list = exercises.filter(function (e) {
     return (e.hashtags || []).some(function (t) { return wanted.has(t); });
+  });
+  if (!desiredIntensity) return list;
+  return list.slice().sort(function (a, b) {
+    return Math.abs(exDifficulty(a) - desiredIntensity) - Math.abs(exDifficulty(b) - desiredIntensity);
   });
 }
 
