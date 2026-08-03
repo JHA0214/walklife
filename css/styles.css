@@ -662,6 +662,35 @@ body.high-contrast .back-btn { color: var(--primary); }
 }
 .tag-choice.active { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-dark); }
 
+/* ---------- 운영진 소개 ---------- */
+.team-card {
+  padding: 20px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  margin-bottom: 16px;
+  text-align: center;
+}
+.team-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--primary-soft);
+  margin: 0 auto 12px;
+  display: block;
+}
+.team-photo-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4em;
+  color: var(--text-soft);
+}
+.team-name { font-size: 1.2em; margin: 0 0 8px; }
+.team-career { color: var(--text-soft); white-space: pre-line; margin-bottom: 10px; text-align: left; }
+.team-greeting { white-space: pre-line; text-align: left; }
+
 /* ---------- 해시태그 편집 칩 ---------- */
 .chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .chip {

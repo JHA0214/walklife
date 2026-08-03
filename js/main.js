@@ -20,6 +20,8 @@ import { renderFindPassword } from "./views/findPassword.js";
 import { renderResetPassword } from "./views/resetPassword.js";
 import { renderMypage } from "./views/mypage.js";
 import { renderEditProfileFields } from "./views/editProfileFields.js";
+import { renderTeam } from "./views/team.js";
+import { renderTeamEdit } from "./views/teamEdit.js";
 
 registerScreen("home", renderHome);
 registerScreen("subparts", renderSubparts);
@@ -34,6 +36,8 @@ registerScreen("findPassword", renderFindPassword);
 registerScreen("resetPassword", renderResetPassword);
 registerScreen("mypage", renderMypage);
 registerScreen("editProfileFields", renderEditProfileFields);
+registerScreen("team", renderTeam);
+registerScreen("teamEdit", renderTeamEdit);
 
 // ---------- 헤더 버튼 이벤트 ----------
 document.getElementById("btnHome").addEventListener("click", function () { go("home"); });

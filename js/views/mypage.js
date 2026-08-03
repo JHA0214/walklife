@@ -31,6 +31,9 @@ export function renderMypage() {
     <p class="page-sub" style="margin-top:28px;">
       <a href="#" id="goEditProfileFields" class="text-link">내 정보 수정</a>
     </p>
+    <p class="page-sub" style="margin-top:8px;">
+      <a href="#" id="goTeam" class="text-link">워크라이프 운영진 소개</a>
+    </p>
 
     <div class="actions-row" style="margin-top:12px;">
       <button class="btn btn-block" id="logoutBtn">로그아웃</button>
@@ -41,6 +44,7 @@ export function renderMypage() {
   if (favs.length) renderExerciseList(document.getElementById("favList"), favs);
 
   document.getElementById("goEditProfileFields").addEventListener("click", function (e) { e.preventDefault(); go("editProfileFields"); });
+  document.getElementById("goTeam").addEventListener("click", function (e) { e.preventDefault(); go("team"); });
 
   document.getElementById("logoutBtn").addEventListener("click", async function () {
     if (confirm(getUsername() + "님, 로그아웃 하시겠어요?")) {

@@ -5,6 +5,7 @@
 
 import { DEFAULT_EXERCISES, DEFAULT_COUNT_SETTINGS, ADMIN_EMAIL, USER_EMAIL_DOMAIN } from "./data.js";
 import { supabase } from "./supabaseClient.js";
+import { uid } from "./utils.js";
 
 const STORE_EX_CACHE = "wl_exercises_cache"; // 오프라인 폴백용 캐시 (더 이상 원본 저장소 아님)
 const STORE_SETTINGS = "wl_settings";
@@ -454,4 +455,45 @@ export async function updateOwnPassword(newPassword) {
 let passwordRecoveryHandler = null;
 export function setPasswordRecoveryHandler(fn) {
   passwordRecoveryHandler = fn;
+}
+
+// ---------- 운영진 소개 (team_members 테이블 + Storage, 조회는 누구나·쓰기는 관리자만) ----------
+function fromTeamRow(row) {
+  return { id: row.id, name: row.name, photoUrl: row.photo_url, career: row.career || "", greeting: row.greeting || "" };
+}
+function toTeamRow(data) {
+  const row = {};
+  if ("id" in data) row.id = data.id;
+  if ("name" in data) row.name = data.name;
+  if ("photoUrl" in data) row.photo_url = data.photoUrl;
+  if ("career" in data) row.career = data.career;
+  if ("greeting" in data) row.greeting = data.greeting;
+  return row;
+}
+
+export async function getTeamMembers() {
+  const { data, error } = await supabase.from("team_members").select("*").order("created_at");
+  if (error) throw error;
+  return data.map(fromTeamRow);
+}
+export async function addTeamMember(data) {
+  const { error } = await supabase.from("team_members").insert(toTeamRow(data));
+  if (error) throw error;
+}
+export async function updateTeamMember(id, data) {
+  const { error } = await supabase.from("team_members").update(toTeamRow(data)).eq("id", id);
+  if (error) throw error;
+}
+export async function removeTeamMember(id) {
+  const { error } = await supabase.from("team_members").delete().eq("id", id);
+  if (error) throw error;
+}
+// 운영진 사진 파일을 Storage에 올리고 공개 URL을 돌려줌
+export async function uploadTeamPhoto(file) {
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = uid() + "." + ext;
+  const { error } = await supabase.storage.from("team-photos").upload(path, file, { upsert: true });
+  if (error) throw error;
+  const { data } = supabase.storage.from("team-photos").getPublicUrl(path);
+  return data.publicUrl;
 }
