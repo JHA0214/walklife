@@ -19,12 +19,14 @@ export function renderAdmin() {
     <p class="page-sub">운동을 생성·수정·삭제하고 유튜브 영상과 해시태그를 관리합니다.</p>
 
     <button class="btn btn-primary btn-block" id="addNew">＋ 새 운동 만들기</button>
+    <button class="btn btn-block" id="goTeam" style="margin-top:10px;">👥 운영진 소개 관리</button>
 
     <h2 class="section-title">등록된 운동 (${exercises.length})</h2>
     <div id="adminList"></div>
   `;
   document.getElementById("back").addEventListener("click", function () { go("home"); });
   document.getElementById("addNew").addEventListener("click", function () { go("adminEdit", {}); });
+  document.getElementById("goTeam").addEventListener("click", function () { go("team"); });
 
   const listEl = document.getElementById("adminList");
   if (!exercises.length) {

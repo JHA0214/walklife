@@ -2,7 +2,7 @@
    워킹라이프 — 운영진 소개 (누구나 볼 수 있고, 관리자만 추가/수정/삭제 가능)
    ========================================================================== */
 
-import { getTeamMembers, removeTeamMember, isAdmin } from "../store.js";
+import { getTeamMembers, removeTeamMember, isAdmin, isLoggedIn } from "../store.js";
 import { esc } from "../utils.js";
 import { go } from "../router.js";
 
@@ -15,7 +15,11 @@ export function renderTeam() {
     <div id="teamList" style="margin-top:16px;"><p class="page-sub">불러오는 중…</p></div>
   `;
 
-  document.getElementById("back").addEventListener("click", function () { go("mypage"); });
+  document.getElementById("back").addEventListener("click", function () {
+    if (isAdmin()) go("admin");
+    else if (isLoggedIn()) go("mypage");
+    else go("home");
+  });
   if (isAdmin()) {
     document.getElementById("addMember").addEventListener("click", function () { go("teamEdit", {}); });
   }
