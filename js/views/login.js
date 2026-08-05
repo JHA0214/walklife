@@ -27,6 +27,11 @@ export function renderLogin() {
       <input type="checkbox" id="rememberUsername" style="width:22px;height:22px;" ${savedUsername ? "checked" : ""} />
       <label for="rememberUsername" style="margin:0;font-weight:normal;">아이디 저장</label>
     </div>
+    <div class="field" style="display:flex;align-items:center;gap:10px;margin-top:-8px;">
+      <input type="checkbox" id="autoLogin" style="width:22px;height:22px;" />
+      <label for="autoLogin" style="margin:0;font-weight:normal;">자동 로그인</label>
+    </div>
+    <p class="field-hint" style="margin-top:-8px;">자동 로그인을 켜면 다음에 앱을 열 때 로그인 화면 없이 바로 들어갑니다. 다른 사람과 같이 쓰는 기기에서는 끄는 걸 권장해요.</p>
     <p id="loginError" class="pw-error" hidden></p>
 
     <div class="actions-row" style="margin-top:8px;">
@@ -59,7 +64,8 @@ export function renderLogin() {
     errorEl.hidden = true;
     okBtn.disabled = true;
     try {
-      await signInUser(username, password);
+      const autoLogin = document.getElementById("autoLogin").checked;
+      await signInUser(username, password, autoLogin);
       setSavedUsername(document.getElementById("rememberUsername").checked ? username.trim() : null);
       go("home");
     } catch (e) {

@@ -15,11 +15,45 @@ async function noOpLock(_name, _acquireTimeout, fn) {
   return await fn();
 }
 
+// "자동 로그인" 체크박스 상태를 담아두는 키(js/store.js의 setAutoLoginPreference 참고).
+// 이 값이 "1"이면 세션을 localStorage(브라우저를 다시 열어도 로그인 유지)에,
+// 아니면 기존처럼 sessionStorage(탭을 닫으면 로그아웃)에 저장합니다.
+export const AUTO_LOGIN_STORAGE_KEY = "wl_auto_login";
+
+// supabase-js는 storage.getItem/setItem/removeItem만 호출하므로, 실제 저장 위치를
+// 그때그때 localStorage/sessionStorage 중 골라 쓰는 어댑터를 직접 구현합니다.
+const hybridSessionStorage = {
+  getItem: function (key) {
+    try {
+      return window.localStorage.getItem(key) || window.sessionStorage.getItem(key);
+    } catch (e) {
+      return null;
+    }
+  },
+  setItem: function (key, value) {
+    try {
+      if (window.localStorage.getItem(AUTO_LOGIN_STORAGE_KEY) === "1") {
+        window.localStorage.setItem(key, value);
+        window.sessionStorage.removeItem(key);
+      } else {
+        window.sessionStorage.setItem(key, value);
+        window.localStorage.removeItem(key);
+      }
+    } catch (e) { /* 무시 */ }
+  },
+  removeItem: function (key) {
+    try {
+      window.localStorage.removeItem(key);
+      window.sessionStorage.removeItem(key);
+    } catch (e) { /* 무시 */ }
+  },
+};
+
 // anon key는 공개용으로 설계된 값입니다(브라우저에 노출돼도 안전).
 // 실제 접근 제어는 Supabase의 Row Level Security 정책이 담당합니다.
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    storage: window.sessionStorage,   // 탭을 닫으면 로그아웃되는 기존 동작 유지
+    storage: hybridSessionStorage,
     persistSession: true,
     autoRefreshToken: true,
     lock: noOpLock,

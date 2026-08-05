@@ -4,7 +4,7 @@
    ========================================================================== */
 
 import { DEFAULT_EXERCISES, DEFAULT_COUNT_SETTINGS, ADMIN_EMAIL, USER_EMAIL_DOMAIN } from "./data.js";
-import { supabase } from "./supabaseClient.js";
+import { supabase, AUTO_LOGIN_STORAGE_KEY } from "./supabaseClient.js";
 import { uid } from "./utils.js";
 
 const STORE_EX_CACHE = "wl_exercises_cache"; // 오프라인 폴백용 캐시 (더 이상 원본 저장소 아님)
@@ -212,6 +212,7 @@ export async function initAuthSession() {
   });
 }
 export async function signInAdmin(password) {
+  setAutoLoginPreference(false); // 관리자 세션은 자동 로그인 대상에서 항상 제외
   const { error } = await supabase.auth.signInWithPassword({ email: ADMIN_EMAIL, password: password });
   if (error) throw error;
   adminFlag = true; // onAuthStateChange 콜백을 기다리지 않고 즉시 반영 (레이스 컨디션 방지)
@@ -220,6 +221,7 @@ export async function signInAdmin(password) {
 export async function signOutAdmin() {
   await supabase.auth.signOut();
   adminFlag = false;
+  setAutoLoginPreference(false);
 }
 
 // ---------- 일반 회원 계정 (Supabase Auth, 아이디를 내부용 이메일로 변환해 사용) ----------
@@ -254,6 +256,15 @@ export function setSavedUsername(username) {
   } catch (e) { /* 무시 */ }
 }
 
+// "자동 로그인" 체크박스 상태 저장. 로그인 요청 직전에 먼저 반영해야, 그 로그인으로
+// 생기는 세션이 올바른 저장소(localStorage/sessionStorage)에 쓰입니다 — supabaseClient.js 참고.
+export function setAutoLoginPreference(enabled) {
+  try {
+    if (enabled) localStorage.setItem(AUTO_LOGIN_STORAGE_KEY, "1");
+    else localStorage.removeItem(AUTO_LOGIN_STORAGE_KEY);
+  } catch (e) { /* 무시 */ }
+}
+
 export function isLoggedIn() {
   return !!currentUsername;
 }
@@ -265,6 +276,7 @@ export function getUsername() {
 // 비워두면 기존처럼 전화번호 일치 확인 방식만 쓸 수 있습니다.
 // age/gender/desiredIntensity/preferredHashtags는 전부 선택 입력입니다.
 export async function signUpUser({ username, password, phone, email, age, gender, desiredIntensity, preferredHashtags }) {
+  setAutoLoginPreference(false); // 가입 직후 세션은 자동 로그인 대상에서 제외(필요하면 로그인 화면에서 따로 켤 수 있음)
   if (!isValidUsername(username)) throw new Error("아이디는 영문/숫자/밑줄 4~20자로 입력해 주세요.");
   if (!isValidPhone(phone)) throw new Error("전화번호 형식이 올바르지 않습니다. 예) 010-1234-5678");
   if (!password || password.length < 6) throw new Error("비밀번호는 6자 이상 입력해 주세요.");
@@ -315,7 +327,8 @@ export async function signUpUser({ username, password, phone, email, age, gender
 // 아니면 내부용 가짜 이메일). 이 조회를 클라이언트에서 직접 하면 비밀번호 없이도
 // 등록된 이메일이 새어나갈 수 있어, 조회+로그인 시도를 전부 서버 쪽 Edge
 // Function(supabase/functions/login)에 맡기고 성공 시 받은 토큰으로 세션만 연다.
-export async function signInUser(username, password) {
+export async function signInUser(username, password, autoLogin) {
+  setAutoLoginPreference(!!autoLogin); // setSession이 저장소에 쓰기 전에 먼저 정해둬야 함
   const { data, error } = await supabase.functions.invoke("login", {
     body: { username: username.trim(), password: password },
   });
@@ -334,6 +347,7 @@ export async function signInUser(username, password) {
 export async function signOutUser() {
   await supabase.auth.signOut();
   currentUsername = null;
+  setAutoLoginPreference(false);
 }
 
 // 마이페이지에서 나이/성별/운동강도/관심운동을 나중에 입력·수정할 수 있게 하는 함수들.
