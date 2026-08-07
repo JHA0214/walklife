@@ -24,7 +24,7 @@ export function renderLogin() {
       <input type="password" id="loginPassword" autocomplete="current-password" placeholder="비밀번호" />
     </div>
     <div class="field" style="display:flex;align-items:center;gap:10px;margin-top:-8px;">
-      <input type="checkbox" id="rememberUsername" style="width:22px;height:22px;" ${savedUsername ? "checked" : ""} />
+      <input type="checkbox" id="rememberUsername" style="width:22px;height:22px;" checked />
       <label for="rememberUsername" style="margin:0;font-weight:normal;">아이디 저장</label>
     </div>
     <div class="field" style="display:flex;align-items:center;gap:10px;margin-top:-8px;">
