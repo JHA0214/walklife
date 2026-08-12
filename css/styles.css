@@ -163,8 +163,8 @@ body.high-contrast .app-header { background: #000; border-bottom: 3px solid var(
   cursor: pointer;
   padding: 6px;
 }
-.brand-mark { font-size: 1.6em; }
-.brand-name { font-size: 1.25em; font-weight: 800; letter-spacing: -0.5px; }
+.brand-mark { font-size: 2.2em; }
+.brand-name { font-size: 1.6em; font-weight: 800; letter-spacing: -0.5px; }
 body.high-contrast .brand { color: var(--primary); }
 
 .header-actions { display: flex; align-items: center; gap: 10px; }
