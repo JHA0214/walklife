@@ -12,7 +12,6 @@ export function renderHome() {
   const favs = exercises.filter(function (e) { return isFav(e.id); });
   viewEl.innerHTML = `
     <h1 class="page-title">어떤 운동을 찾으세요?</h1>
-    <p class="page-sub">동작이나 부위, 또는 키워드(#해시태그)로 찾아보세요.</p>
 
     <div class="search-box">
       <span class="search-icon" aria-hidden="true">🔍</span>
