@@ -56,15 +56,17 @@ export function renderExerciseList(container, list) {
       .map(function (t) { return `<span class="tag">#${esc(t)}</span>`; }).join("");
     return `
       <div class="exercise-card" data-id="${esc(e.id)}" role="button" tabindex="0">
-        ${thumbHtml}
-        <div class="exercise-card-body">
-          <p class="exercise-card-title">${esc(e.title)}</p>
-          ${starRatingHtml(exDifficulty(e))}
-          <span class="badge">${esc(e.bodyPart)} · ${esc(e.subPart)}</span>
-          <div class="exercise-card-tags" style="margin-top:8px;">${tags}</div>
+        <p class="exercise-card-title">${esc(e.title)}</p>
+        <div class="exercise-card-row">
+          ${thumbHtml}
+          <div class="exercise-card-body">
+            ${starRatingHtml(exDifficulty(e))}
+            <span class="badge">${esc(e.bodyPart)} · ${esc(e.subPart)}</span>
+            <div class="exercise-card-tags" style="margin-top:8px;">${tags}</div>
+          </div>
+          ${favBtnHtml(e.id)}
+          <span class="go" aria-hidden="true">›</span>
         </div>
-        ${favBtnHtml(e.id)}
-        <span class="go" aria-hidden="true">›</span>
       </div>`;
   }).join("");
   container.querySelectorAll(".exercise-card").forEach(function (c) {

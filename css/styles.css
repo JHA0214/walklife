@@ -310,8 +310,8 @@ body.high-contrast .admin-banner { background: #000; color: var(--accent); borde
 .exercise-list { display: flex; flex-direction: column; gap: 14px; }
 .exercise-card {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 10px;
   padding: 18px;
   border: 2px solid var(--border);
   border-radius: var(--radius);
@@ -323,6 +323,7 @@ body.high-contrast .admin-banner { background: #000; color: var(--accent); borde
   box-shadow: var(--shadow);
 }
 .exercise-card:hover, .exercise-card:focus { border-color: var(--primary); outline: none; }
+.exercise-card-row { display: flex; align-items: center; gap: 16px; }
 .exercise-thumb {
   width: 96px;
   height: 72px;
@@ -332,7 +333,7 @@ body.high-contrast .admin-banner { background: #000; color: var(--accent); borde
   flex-shrink: 0;
 }
 .exercise-card-body { flex: 1; min-width: 0; }
-.exercise-card-title { font-size: 1.1em; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exercise-card-title { font-size: 1.1em; font-weight: 800; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .exercise-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .exercise-card .go { font-size: 1.6em; color: var(--primary); }
 
