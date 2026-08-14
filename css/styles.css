@@ -325,14 +325,15 @@ body.high-contrast .admin-banner { background: #000; color: var(--accent); borde
 .exercise-card:hover, .exercise-card:focus { border-color: var(--primary); outline: none; }
 .exercise-thumb {
   width: 96px;
-  height: 72px;
+  min-height: 72px;
+  align-self: stretch;
   border-radius: 16px;
   object-fit: cover;
   background: var(--primary-soft);
   flex-shrink: 0;
 }
 .exercise-card-body { flex: 1; min-width: 0; }
-.exercise-card-title { font-size: 1.1em; font-weight: 800; margin: 0 0 4px; }
+.exercise-card-title { font-size: 1.1em; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .exercise-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .exercise-card .go { font-size: 1.6em; color: var(--primary); }
 
@@ -365,8 +366,12 @@ body.high-contrast .star-rating-fg { color: var(--accent); }
 /* ---------- 즐겨찾기 별표 ---------- */
 .fav-btn {
   flex-shrink: 0;
+  align-self: stretch;
   min-width: 48px;
   min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: none;
   color: var(--border);
