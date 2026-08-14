@@ -325,8 +325,7 @@ body.high-contrast .admin-banner { background: #000; color: var(--accent); borde
 .exercise-card:hover, .exercise-card:focus { border-color: var(--primary); outline: none; }
 .exercise-thumb {
   width: 96px;
-  min-height: 72px;
-  align-self: stretch;
+  height: 72px;
   border-radius: 16px;
   object-fit: cover;
   background: var(--primary-soft);
