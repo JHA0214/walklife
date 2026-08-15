@@ -52,8 +52,6 @@ export function renderExerciseList(container, list) {
     const thumbHtml = thumb
       ? `<img class="exercise-thumb" src="${esc(thumb)}" alt="" />`
       : `<div class="exercise-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.6em;">🎬</div>`;
-    const tags = (e.hashtags || [])
-      .map(function (t) { return `<span class="tag">#${esc(t)}</span>`; }).join("");
     return `
       <div class="exercise-card" data-id="${esc(e.id)}" role="button" tabindex="0">
         <p class="exercise-card-title">${esc(e.title)}</p>
@@ -62,7 +60,6 @@ export function renderExerciseList(container, list) {
           <div class="exercise-card-body">
             ${starRatingHtml(exDifficulty(e))}
             <span class="badge">${esc(e.bodyPart)} · ${esc(e.subPart)}</span>
-            <div class="exercise-card-tags" style="margin-top:8px;">${tags}</div>
           </div>
           ${favBtnHtml(e.id)}
           <span class="go" aria-hidden="true">›</span>
