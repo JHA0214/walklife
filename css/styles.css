@@ -169,24 +169,8 @@ body.high-contrast .brand { color: var(--primary); }
 
 .header-actions { display: flex; align-items: center; gap: 10px; }
 
-.icon-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.85);
-  cursor: pointer;
-  font-size: 0.7em;
-  padding: 6px 10px;
-  line-height: 1;
-}
-.icon-btn-label { font-size: 1em; margin-top: 0; }
-body.high-contrast .icon-btn { color: var(--primary); border-color: var(--border); background: #000; }
-
-/* 헤더의 작은 텍스트 버튼(회원 로그인 버튼, 관리자 로그인 모달 등에서 사용) */
-.admin-login-btn {
+/* 헤더의 작은 텍스트 버튼(설정, 회원 로그인 버튼, 관리자 로그인 모달 등에서 사용) */
+.icon-btn, .admin-login-btn {
   border: 1px solid rgba(255, 255, 255, 0.5);
   background: transparent;
   color: rgba(255, 255, 255, 0.85);
@@ -195,7 +179,7 @@ body.high-contrast .icon-btn { color: var(--primary); border-color: var(--border
   border-radius: 8px;
   cursor: pointer;
 }
-body.high-contrast .admin-login-btn { color: var(--primary); border-color: var(--border); }
+body.high-contrast .icon-btn, body.high-contrast .admin-login-btn { color: var(--primary); border-color: var(--border); }
 
 /* ---------- 관리자 배너 ---------- */
 .admin-banner {
