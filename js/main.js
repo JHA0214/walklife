@@ -8,6 +8,7 @@ import { go, render, registerScreen } from "./router.js";
 import { closeModal } from "./adminAuth.js";
 
 import { renderHome } from "./views/home.js";
+import { renderAllExercises } from "./views/allExercises.js";
 import { renderSubparts } from "./views/subparts.js";
 import { renderSearchResults } from "./views/search.js";
 import { renderExercise } from "./views/exercise.js";
@@ -24,6 +25,7 @@ import { renderTeam } from "./views/team.js";
 import { renderTeamEdit } from "./views/teamEdit.js";
 
 registerScreen("home", renderHome);
+registerScreen("allExercises", renderAllExercises);
 registerScreen("subparts", renderSubparts);
 registerScreen("search", renderSearchResults);
 registerScreen("exercise", renderExercise);

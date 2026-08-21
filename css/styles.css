@@ -568,6 +568,23 @@ body.high-contrast .slider { border: 2px solid var(--border); }
 }
 body.high-contrast .back-btn { color: var(--primary); }
 
+.more-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  font-size: 0.95em;
+  font-weight: 800;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--primary-dark);
+  cursor: pointer;
+}
+.more-btn:hover { filter: brightness(0.97); }
+.more-btn:focus { outline: 4px solid var(--accent); }
+body.high-contrast .more-btn { color: var(--primary); }
+
 .actions-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 
 /* ---------- 폼 ---------- */

@@ -6,6 +6,8 @@ import { getExercises, filterExercises, isFav } from "../store.js";
 import { renderExerciseList } from "../exerciseCard.js";
 import { go } from "../router.js";
 
+const HOME_LIST_PREVIEW_COUNT = 2;
+
 export function renderHome() {
   const viewEl = document.getElementById("view");
   const exercises = getExercises();
@@ -37,10 +39,11 @@ export function renderHome() {
 
     <h2 class="section-title">전체 운동</h2>
     <div id="homeList" class="exercise-list"></div>
+    ${exercises.length > HOME_LIST_PREVIEW_COUNT ? `<button type="button" id="btnMoreExercises" class="more-btn">전체 운동 더보기 (${exercises.length}개) ›</button>` : ""}
   `;
 
   renderExerciseList(document.getElementById("favList"), favs);
-  renderExerciseList(document.getElementById("homeList"), exercises);
+  renderExerciseList(document.getElementById("homeList"), exercises.slice(0, HOME_LIST_PREVIEW_COUNT));
 
   const searchInput = document.getElementById("homeSearch");
   searchInput.addEventListener("keydown", function (e) {
@@ -55,6 +58,9 @@ export function renderHome() {
   viewEl.querySelectorAll(".bodypart-btn").forEach(function (b) {
     b.addEventListener("click", function () { go("subparts", { part: b.dataset.part }); });
   });
+
+  const btnMore = document.getElementById("btnMoreExercises");
+  if (btnMore) btnMore.addEventListener("click", function () { go("allExercises"); });
 }
 
 function doSearch(q) {
