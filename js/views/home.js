@@ -2,8 +2,8 @@
    워킹라이프 — 홈 화면
    ========================================================================== */
 
-import { getExercises, filterExercises, isFav } from "../store.js";
-import { renderExerciseList } from "../exerciseCard.js";
+import { getExercises, isFav } from "../store.js";
+import { renderExerciseList, wireSearchFilter } from "../exerciseCard.js";
 import { go } from "../router.js";
 
 const HOME_LIST_PREVIEW_COUNT = 2;
@@ -50,10 +50,7 @@ export function renderHome() {
     if (e.key === "Enter") doSearch(searchInput.value);
   });
   // 입력 즉시 필터 (홈 목록에서)
-  searchInput.addEventListener("input", function () {
-    const q = searchInput.value.trim();
-    renderExerciseList(document.getElementById("homeList"), q ? filterExercises(q) : exercises);
-  });
+  wireSearchFilter(searchInput, document.getElementById("homeList"), exercises);
 
   viewEl.querySelectorAll(".bodypart-btn").forEach(function (b) {
     b.addEventListener("click", function () { go("subparts", { part: b.dataset.part }); });

@@ -2,8 +2,8 @@
    워킹라이프 — 전체 운동 목록 (홈 화면 "더보기")
    ========================================================================== */
 
-import { getExercises, filterExercises } from "../store.js";
-import { renderExerciseList } from "../exerciseCard.js";
+import { getExercises } from "../store.js";
+import { renderExerciseList, wireSearchFilter } from "../exerciseCard.js";
 import { go } from "../router.js";
 
 export function renderAllExercises() {
@@ -25,10 +25,7 @@ export function renderAllExercises() {
   renderExerciseList(document.getElementById("allExercisesList"), exercises);
 
   const searchInput = document.getElementById("allExercisesSearch");
-  searchInput.addEventListener("input", function () {
-    const q = searchInput.value.trim();
-    renderExerciseList(document.getElementById("allExercisesList"), q ? filterExercises(q) : exercises);
-  });
+  wireSearchFilter(searchInput, document.getElementById("allExercisesList"), exercises);
 
   document.getElementById("back").addEventListener("click", function () { go("home"); });
 }

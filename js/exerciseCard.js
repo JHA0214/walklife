@@ -3,7 +3,7 @@
    ========================================================================== */
 
 import { esc } from "./utils.js";
-import { getExercises, exDifficulty, isFav, toggleFav } from "./store.js";
+import { getExercises, exDifficulty, isFav, toggleFav, filterExercises } from "./store.js";
 import { thumbUrl } from "./youtube.js";
 import { starRatingHtml } from "./starRating.js";
 import { go } from "./router.js";
@@ -39,6 +39,15 @@ function syncFavSection() {
   const favs = getExercises().filter(function (e) { return isFav(e.id); });
   favSection.hidden = !favs.length;
   renderExerciseList(document.getElementById("favList"), favs);
+}
+
+// 검색창 입력 시 목록을 필터링해 다시 그림 (홈/전체 운동 화면 공용)
+// 입력이 비어 있으면 fallbackList(원본 목록)를 그대로 보여줌
+export function wireSearchFilter(inputEl, listEl, fallbackList) {
+  inputEl.addEventListener("input", function () {
+    const q = inputEl.value.trim();
+    renderExerciseList(listEl, q ? filterExercises(q) : fallbackList);
+  });
 }
 
 // ---------- 운동 카드 목록 렌더 ----------
